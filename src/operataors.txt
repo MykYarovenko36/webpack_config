@@ -1,0 +1,76 @@
+of ( '', '', '' );
+of - создать стрим из любых данных;
+
+subscribe( val => { console.log(val) } );
+subscribe - подписаться на события;
+
+const stream$ = of(1, 2, 3, 4, 5);
+переменная, имя которой означает что это стрим из каких-то данных;
+
+stream$.subscribe( val => console.log('Value', val) );
+
+const arr$ = from([1, 2, 3, 4]);
+метод from для работы с массивами;
+
+const arr$ = from([1, 2, 3, 4]).pipe(
+  scan((acc, v) => acc.concat(v), []);
+)
+метод pipe() доступен у любых объектов которые создают стримы;
+
+const stream$ = new Observable(observer => {
+observer.next('first value');
+setTimeout(()=> observer.next('After 1000ms'), 1000)
+setTimeout(() => observer.complete(), 1500),
+setTimeout(()=> observer.error('Something went wrong'), 2000)
+setTimeout(()=> observer.next('After 3000ms'), 3000)
+});
+
+stream$.subscribe( 
+  (val) => console.log('Val:',value), - отвечает за метод next;
+  (err) => console.log('Err', err), - обрабатываем ошибку;
+  () => console.log('Complete'), - выполняем когда мы завершаем стрим;
+);
+альтернативная запись - 
+stream$.subscribe = {
+next(val) {
+  console.log(val)
+},
+error(err) {
+  console.log(err)
+},
+complete() {
+  console.log('Complete')
+},
+};
+fromEvent(document.querySelector('canvas'), 'mousemove')
+.pipe(
+  map(e => ({
+   x: e.offsetX,
+   y: e.offsetY,
+   ctx: e.target.getContext('2d)
+   }))
+.subscribe(pos => {
+  pos.ctx.fillRect(pos.x, pos.y, 2, 2)
+})
+const clear$ = fromEvent(document.getElementById('clear', 'click');
+clear$.subscribe(() => {
+  const canvas = document.querySelector('canvas');
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height) 
+})
+
+const sub = interval(500).subscribe(v => console.log(v));
+setTimeout(() => {
+  sub.unsubscribe()
+  }, 4000);
+timer(2500).subscribe(v => console.log(v));
+range(42, 10).subscribe(v => console.log(v));
+----------------------------------------------------------------------
+Subject;
+import {Subject, BehaviorSubject, ReplaySubject} from 'rxjs';
+document.addEventListener('click', () => {
+  const stream$ = new ReplaySubject();
+  stream$.subscribe(value => console.log(value));
+  stream$.next('Hello');
+  stream$.next('RxJs');
+  stream$.next('JS');
+  });
