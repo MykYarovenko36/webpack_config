@@ -1,0 +1,168 @@
+of ( '', '', '' );
+of - создать стрим из любых данных;
+
+subscribe( val => { console.log(val) } );
+subscribe - подписаться на события;
+
+const stream$ = of(1, 2, 3, 4, 5);
+переменная, имя которой означает что это стрим из каких-то данных;
+
+stream$.subscribe( val => console.log('Value', val) );
+
+const arr$ = from([1, 2, 3, 4]);
+метод from для работы с массивами;
+
+const arr$ = from([1, 2, 3, 4]).pipe(
+  scan((acc, v) => acc.concat(v), []);
+)
+метод pipe() доступен у любых объектов которые создают стримы;
+
+const stream$ = new Observable(observer => {
+observer.next('first value');
+setTimeout(()=> observer.next('After 1000ms'), 1000)
+setTimeout(() => observer.complete(), 1500),
+setTimeout(()=> observer.error('Something went wrong'), 2000)
+setTimeout(()=> observer.next('After 3000ms'), 3000)
+});
+
+stream$.subscribe(
+  (val) => console.log('Val:',value), - отвечает за метод next;
+  (err) => console.log('Err', err), - обрабатываем ошибку;
+  () => console.log('Complete'), - выполняем когда мы завершаем стрим;
+);
+альтернативная запись -
+stream$.subscribe = {
+next(val) {
+  console.log(val)
+},
+error(err) {
+  console.log(err)
+},
+complete() {
+  console.log('Complete')
+},
+};
+fromEvent(document.querySelector('canvas'), 'mousemove')
+.pipe(
+  map(e => ({
+   x: e.offsetX,
+   y: e.offsetY,
+   ctx: e.target.getContext('2d)
+   }))
+.subscribe(pos => {
+  pos.ctx.fillRect(pos.x, pos.y, 2, 2)
+})
+const clear$ = fromEvent(document.getElementById('clear', 'click');
+clear$.subscribe(() => {
+  const canvas = document.querySelector('canvas');
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+})
+
+const sub = interval(500).subscribe(v => console.log(v));
+setTimeout(() => {
+  sub.unsubscribe()
+  }, 4000);
+timer(2500).subscribe(v => console.log(v));
+range(42, 10).subscribe(v => console.log(v));
+----------------------------------------------------------------------
+Subject;
+import {Subject, BehaviorSubject, ReplaySubject} from 'rxjs';
+document.addEventListener('click', () => {
+  const stream$ = new ReplaySubject();
+  stream$.subscribe(value => console.log(value));
+  stream$.next('Hello');
+  stream$.next('RxJs');
+  stream$.next('JS');
+  });
+----------------------------------------------------------------------
+Operators;
+
+import {interval, fromEvent} from 'rxjs';
+import {map, filter, tap, take, takeLast, takeWhile, scan, reduce} from 'rxjs/operators';
+fromEvent(document, 'click')
+.pipe(
+  switchMap(
+const stream = interval(1000)
+.pipe(
+    tap(v => console.log('Tap',v)), - указать промежуточный результат
+    map(v => v*3), - сделать что-то с результатом на каждой итерации
+	filter(v => v % 2 === 0), - вывести только те числа, которые без остатка деляться на два
+	take(5) - получить(ограничить выполнение до-) 5 значений итерации, по завершению complete;
+	takeLast(5) - получить последние пять элементов;
+	takeWhile(v => v < 7) - выполнять стрим, пока v < 7;
+	scan((acc, v) => acc + v, 0) - работает как метод reduce в ходе выполнения стрима
+	reduce((acc, v) => acc + v, 0) - работает как reduce по завершению стрима, не выводит промежуточный результат;
+)
+stream$.subscribe({
+  next: v => console.log('Next:', v),
+  complete: () => console.log('Complete')
+})
+-----------------------------------------------
+fromEvent
+map - сделать что-то с результатом на каждой итерации
+filter - filter(v => v % 2 === 0), - вывести только те числа, которые без остатка деляться на два
+throttleTime - установить задержку выполнения стрима, то-есть события будут происходить с указаным интервалом
+distinctUntilChanged - не менять, пока данные не изменятся.
+pairwise - возвращает массив, в котором 2 значения( предидущее и нынешнее);
+debounceTime - обрабатыает события, начиная с момента события с задержкой по времени,
+спустя таймаут выводит только последнее событие.
+switchMap
+------------------------------------------------
+       ----------> Количество
+  | |--------------|--------------|
+в | |     Value    |   iterable   |
+р | |              |     Value    |
+е | |--------------|--------------|
+м | |    Promise   |  Observable  |
+я | |     Value    |     Value    |
+    |--------------|--------------|
+
+Поток - массив распределённый во времени.
+Observer - паттерн наблюдатель, реагирует на
+изменения.
+Iterator - паттерн, перебирает множество.
+Observable - субьект, наблюдаемый обьект.
+ stream$.subscribe( {
+ next: (v) => renderNext(value),
+ error: (error) => renderError(error),
+ compelte: () => renderComplete(),
+ });
+ const stream$ = object.subscribe();
+ stream$.unsubscribe - если всё в подписке выполнено
+
+- Rx.Observable.timer(100, 500) - через 100мс каждые 500мс начнёт возвращать значения.
+- Rx.Observable.timer(100, 500).take(12) - ограничить колич-во выполнений до 12.
+- Rx.Observable.merge(streamA$, streamB$).subscribe(next); слияние двух разных потоков;
+- Rx.Observable.combineLatest(streamA$, streamB$)
+  .map(([a, b]) => a + b)
+  .subscribe(next); - обьеденить последние значения;
+------поток высшего порядка -------
+Rx.Observable.timer(0, 1500)
+.take(3)
+.map((value) => 'abcd'[value])
+.mergeMap( value => {
+  return Rx.Observable.timer(0, 450).take(6)
+  .map(innerValue => value + innerValue);
+  })
+  .subscribe(renderNext); - сливает все значения в одно,
+ switchMap - переключаеться между потоками, начиная с одного потока
+пытаясь его закончить.Можем написать отменяемые запросы
+
+
+Rx.Observable
+.fromEvent(inputElement, 'input')
+.map((event) => event.target.value)
+.debounceTime(500)
+.distinctUntilChanged()
+.do(() => setLoading(true))
+.switchMap(value => fetchData(value)))
+.do(() => setLoading(false))
+.subscribe(logToOutput)
+
+
+
+
+
+
+
+
