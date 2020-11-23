@@ -69,11 +69,9 @@ const jsLoaders = () => {
     loader: 'babel-loader',
     options: babelOptions()
   }]
-
   if (isDev) {
     loaders.push('eslint-loader')
   }
-
   return loaders
 }
 
@@ -105,10 +103,10 @@ const plugins = () => {
 }
 
 module.exports = {
-  context: path.resolve(__dirname, 'src'),
+  context: path.resolve(__dirname, 'src/'),
   mode: 'development',
   entry: {
-    main: ['@babel/polyfill', './index.js']
+    main: ['@babel/polyfill', './index.js'],
   },
   output: {
     filename: filename('js'),
@@ -160,7 +158,7 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: /(node_modules|bower_components)/,
         use: jsLoaders()
       },
       {

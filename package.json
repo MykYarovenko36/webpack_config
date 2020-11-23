@@ -1,5 +1,5 @@
 {
-  "name": "webpack-config-N_Yarovenko",
+  "name": "webpack-config_n.yarovenko",
   "version": "1.0.0",
   "description": "homeworks",
   "private": true,
@@ -75,10 +75,11 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
-    "jquery": "^3.5.1",
+    "eslint-loader": "^4.0.2",
     "lodash": "^4.17.20",
     "normalize.css": "^8.0.1",
     "react": "^16.14.0",
-    "react-dom": "^16.14.0"
+    "react-dom": "^16.14.0",
+    "rxjs": "^6.6.3"
   }
 }
